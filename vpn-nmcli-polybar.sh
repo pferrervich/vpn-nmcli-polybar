@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 
-VPN_ENTRY="UCD"
+VPN_ENTRY="MY_VPN"
 
 
 ACTIVE_CONNECTION=$(nmcli --mode tabular --terse connection show --active | grep vpn | cut -d ':' -f1) || true
 
 
 if [[ "$ACTIVE_CONNECTION" == "$VPN_ENTRY" ]]; then
-        echo "UP"
+        echo "ON"
 fi
 
 
 if [[ "$ACTIVE_CONNECTION" != "$VPN_ENTRY" ]]; then
-        echo "DN"
+        echo "OFF"
 fi
 
 
@@ -22,12 +22,11 @@ vpn_toggle_connection() {
 # connects or disconnects vpn
 
 if [[ "$ACTIVE_CONNECTION" == "$VPN_ENTRY" ]]; then
-        nmcli c d $VPN_ENTRY 
-fi
-
-
-if [[ "$ACTIVE_CONNECTION" != "$VPN_ENTRY" ]]; then
-        nmcli c u $VPN_ENTRY 
+        nmcli con down id "$VPN_ENTRY"
+        
+else
+   [[ "$ACTIVE_CONNECTION" != "$VPN_ENTRY" ]];
+        nmcli con up id "$VPN_ENTRY" passwd-file /etc/vpn/pass.txt
 fi
 
 }
